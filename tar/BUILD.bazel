@@ -1,0 +1,33 @@
+cc_binary(
+    name = "tar",
+    srcs = select({
+        "@platforms//os:windows": glob([
+            "*.c",
+            "*.h",
+        ]),
+        "//conditions:default": glob(
+            [
+                "*.c",
+                "*.h",
+            ],
+            exclude = ["bsdtar_windows.*"],
+        ),
+    }),
+    copts = [
+        "-Wno-implicit-function-declaration",
+        "-Wno-int-conversion",
+    ],
+    defines = [
+        'BSDTAR_VERSION_STRING=\\"3.7.2\\"',
+    ],
+    includes = [
+        "../libarchive",
+        "../libarchive_fe",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:config_h",
+        "//libarchive",
+        "//libarchive_fe",
+    ],
+)

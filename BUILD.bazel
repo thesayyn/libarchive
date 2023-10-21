@@ -1,0 +1,61 @@
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
+
+cc_library(
+    name = "config_h",
+    hdrs = ["xplat_config.h"],
+    defines = select({
+        "@platforms//os:linux": [
+            "HAVE_PATHS_H",
+            "HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC",
+        ],
+        "//conditions:default": [],
+    }) + select({
+        "@platforms//os:windows": [
+            "gid_t=short",
+            "id_t=\"unsigned long\"",
+            "uid_t=short",
+        ],
+        "//conditions:default": [
+            "HAVE_SYS_TYPES_H",
+        ],
+    }) + select({
+        "@platforms//os:windows": [
+            "HAVE_WINCRYPT_H",
+        ],
+        "//conditions:default": [],
+    }) + select({
+        "@platforms//os:windows": [],
+        "//conditions:default": [
+            "HAVE_FORK",
+            "HAVE_PIPE",
+            "HAVE_POLL",
+            "HAVE_POLL_H",
+            "HAVE_PWD_H",
+            "HAVE_SYS_WAIT_H",
+        ],
+    }),
+    visibility = ["//visibility:public"],
+)
+
+PLATFORMS = [
+    "@zig_sdk//platform:darwin_amd64",
+    "@zig_sdk//platform:darwin_arm64",
+    "@zig_sdk//platform:windows_amd64",
+    "@zig_sdk//platform:windows_arm64",
+    "@zig_sdk//libc_aware/platform:linux_amd64_musl",
+    "@zig_sdk//libc_aware/platform:linux_arm64_musl",
+]
+
+[
+    platform_transition_filegroup(
+        name = "for_" + platform.split(":")[1],
+        srcs = ["//tar"],
+        target_platform = platform,
+    )
+    for platform in PLATFORMS
+]
+
+filegroup(
+    name = "for_all_platforms",
+    srcs = ["for_" + platform.split(":")[1] for platform in PLATFORMS],
+)

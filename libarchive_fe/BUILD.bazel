@@ -1,0 +1,9 @@
+cc_library(
+    name = "libarchive_fe",
+    srcs = glob(["*.c"]),
+    hdrs = glob(["*.h"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:config_h",
+    ],
+)

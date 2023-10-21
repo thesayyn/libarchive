@@ -32,7 +32,6 @@ build/autoconf/missing
 build/pkgconfig/libarchive.pc
 cat/test/list.h
 config.cache
-config.h
 config.h.in
 config.log
 config.status
@@ -74,3 +73,6 @@ test-suite.log
 
 .sw?
 .*.sw?
+
+bazel-*
+BUILD.bazel.*

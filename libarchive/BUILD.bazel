@@ -1,0 +1,41 @@
+PUBLIC_HEADERS = [
+    "archive.h",
+    "archive_entry.h",
+]
+
+WINDOWS_SRCS = glob(["*_windows.*"]) + ["archive_entry_copy_bhfi.c"]
+
+cc_library(
+    name = "libarchive",
+    srcs = glob(
+        [
+            "*.c",
+            "*.h",
+        ],
+        exclude = PUBLIC_HEADERS + WINDOWS_SRCS + [
+            "archive_disk_acl_*.c",
+        ],
+    ) + select({
+        "@platforms//os:windows": WINDOWS_SRCS,
+        "@platforms//os:macos": ["archive_disk_acl_darwin.c"],
+        "@platforms//os:linux": ["archive_disk_acl_linux.c"],
+        "//conditions:default": [],
+    }),
+    hdrs = PUBLIC_HEADERS,
+    local_defines = [
+        "HAVE_CONFIG_H",
+        # ZSTD support
+        "HAVE_ZSTD_H",
+        "HAVE_LIBZSTD",
+        "HAVE_LIBZSTD_COMPRESSOR",
+        # LZMA support
+        "HAVE_LZMA_H",
+        "HAVE_LZMA_STREAM_ENCODER_MT",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:config_h",
+        "@xz//:lzma",
+        "@zstd",
+    ],
+)

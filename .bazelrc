@@ -1,0 +1,46 @@
+#common --noenable_workspace
+common --dynamic_mode=off
+
+common --lockfile_mode=off
+
+common --bes_results_url=https://app.buildbuddy.io/invocation/
+common --bes_backend=grpcs://remote.buildbuddy.io
+common --remote_cache=grpcs://remote.buildbuddy.io
+common --remote_download_toplevel
+common --nobuild_runfile_links
+common --remote_timeout=3600
+common:linux --remote_executor=grpcs://remote.buildbuddy.io
+common --jobs=500
+
+common --enable_platform_specific_config
+common:linux --extra_execution_platforms=//rbe_platform
+common:linux --host_platform=//rbe_platform
+
+common --extra_toolchains @zig_sdk//toolchain:linux_amd64_musl
+common --extra_toolchains @zig_sdk//libc_aware/toolchain:linux_amd64_musl
+common --extra_toolchains @zig_sdk//libc_aware/toolchain:linux_arm64_musl
+common --extra_toolchains @zig_sdk//toolchain:darwin_amd64
+common --extra_toolchains @zig_sdk//toolchain:darwin_arm64
+common --extra_toolchains @zig_sdk//toolchain:windows_amd64
+common --extra_toolchains @zig_sdk//toolchain:windows_arm64
+common:linux --platforms @zig_sdk//libc_aware/platform:linux_x86_64_musl
+common --experimental_platform_in_output_dir
+
+common --repo_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+common --action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+common --host_action_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+common --incompatible_strict_action_env
+
+common --experimental_merged_skyframe_analysis_execution
+
+common --features=thin_lto
+# ThinLTO feature doesn't exist in Zig toolchain, so we must set the flags manually.
+# It also doesn't support LTO on darwin targets, so we can't set this globally.
+# Instead, we configure copt/linkopt inside the toolchain itself (with a WORKSPACE patch).
+#common --copt -flto=thin
+
+# Compilation Flags
+#common -c opt
+build:opt --strip=always
+common --copt -ffunction-sections
+common --copt -fdata-sections

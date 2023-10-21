@@ -196,7 +196,8 @@ main(int argc, char **argv)
 #endif
 
 	/* Set lafe_progname before calling lafe_warnc. */
-	lafe_setprogname(*argv, "bsdtar");
+	lafe_setprogname("tar", "bsdtar");
+	//lafe_setprogname(*argv, "bsdtar");
 
 #if HAVE_SETLOCALE
 	if (setlocale(LC_ALL, "") == NULL)
@@ -1070,7 +1071,7 @@ static const char *long_help_msg =
 	"  -c Create  -r Add/Replace  -t List  -u Update  -x Extract\n"
 	"Common Options:\n"
 	"  -b #  Use # 512-byte records per I/O block\n"
-	"  -f <filename>  Location of archive (default " _PATH_DEFTAPE ")\n"
+	"  -f <filename>  Location of archive\n"
 	"  -v    Verbose\n"
 	"  -w    Interactive\n"
 	"Create: %p -c [options] [<file> | <dir> | @<archive> | -C <dir> ]\n"
