@@ -1,0 +1,21 @@
+on:
+  push:
+    branches: [master]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          docker build -t bazel-base-image .
+          container=$(docker create bazel-base-image)
+          docker cp $container:/libarchive/bazel-out/darwin_amd64-fastbuild/bin/tar/tar bsdtar_darwin_amd64
+          docker cp $container:/libarchive/bazel-out/darwin_arm64-fastbuild/bin/tar/tar bsdtar_darwin_arm64
+          docker cp $container:/libarchive/bazel-out/linux_amd64_musl-fastbuild/bin/tar/tar bsdtar_linux_amd64_musl
+          docker cp $container:/libarchive/bazel-out/linux_arm64_musl-fastbuild/bin/tar/tar bsdtar_linux_arm64_musl
+
+      - uses: actions/upload-artifact@v4
+        with:
+           path: bsdtar_*
+

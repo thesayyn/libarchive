@@ -44,3 +44,5 @@ common --features=thin_lto
 build:opt --strip=always
 common --copt -ffunction-sections
 common --copt -fdata-sections
+
+common --registry=https://raw.githubusercontent.com/thesayyn/bazel-central-registry/b919744473783853721b14ff88a87cf4637fa0ea
